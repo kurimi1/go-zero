@@ -30,17 +30,21 @@ func RawFieldNames(in interface{}, postgresSql ...bool) []string {
 	for i := 0; i < v.NumField(); i++ {
 		// gets us a StructField
 		fi := typ.Field(i)
-		if tagv := fi.Tag.Get(dbTag); tagv != "" {
-			if pg {
-				out = append(out, tagv)
-			} else {
-				out = append(out, fmt.Sprintf("`%s`", tagv))
-			}
-		} else {
+		tagv := fi.Tag.Get(dbTag)
+		switch tagv {
+		case "-":
+			continue
+		case "":
 			if pg {
 				out = append(out, fi.Name)
 			} else {
 				out = append(out, fmt.Sprintf("`%s`", fi.Name))
+			}
+		default:
+			if pg {
+				out = append(out, tagv)
+			} else {
+				out = append(out, fmt.Sprintf("`%s`", tagv))
 			}
 		}
 	}
