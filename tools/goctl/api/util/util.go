@@ -13,6 +13,14 @@ import (
 	"github.com/zeromicro/go-zero/tools/goctl/util/pathx"
 )
 
+var commentLineBreaks = strings.NewReplacer(
+	"\r\n", " ",
+	"\r", " ",
+	"\n", " ",
+	"\u2028", " ",
+	"\u2029", " ",
+)
+
 // MaybeCreateFile creates file if not exists
 func MaybeCreateFile(dir, subdir, file string) (fp *os.File, created bool, err error) {
 	logx.Must(pathx.MkdirIfNotExist(path.Join(dir, subdir)))
@@ -72,6 +80,12 @@ func WriteIndent(writer io.Writer, indent int) {
 	for i := 0; i < indent; i++ {
 		fmt.Fprint(writer, "\t")
 	}
+}
+
+// ToSingleLineComment returns comment content safe to append after a line-comment marker.
+func ToSingleLineComment(comment string) string {
+	comment = strings.TrimPrefix(comment, "//")
+	return commentLineBreaks.Replace(comment)
 }
 
 // RemoveComment filters comment content

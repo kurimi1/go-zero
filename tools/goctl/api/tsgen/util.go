@@ -29,8 +29,7 @@ func writeProperty(writer io.Writer, member spec.Member, indent int) error {
 
 	comment := member.GetComment()
 	if len(comment) > 0 {
-		comment = strings.TrimPrefix(comment, "//")
-		comment = " // " + strings.TrimSpace(comment)
+		comment = " // " + strings.TrimSpace(apiutil.ToSingleLineComment(comment))
 	}
 	if len(member.Docs) > 0 {
 		fmt.Fprintf(writer, "%s\n", strings.Join(member.Docs, ""))
